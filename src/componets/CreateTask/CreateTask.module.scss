@@ -1,0 +1,69 @@
+@keyframes AnimationToggleDetails {
+        from {
+                height: 0;
+                opacity: 0;
+                
+            }
+        
+            to {
+                height: 300px;
+                visibility: visible;
+            }
+}
+.newTask {
+    display: flex;
+    align-items: center;
+    padding-inline: 24px;
+    width: 250px;
+    background: white;
+    height: 48px;
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    border-radius: 24px;
+
+    &__title {
+        font-size: 16px;
+        color: black;
+        font-weight: 400;
+        margin-left: 12px;
+    }
+
+    &__input {
+        background: transparent;
+        outline: none;
+        border: none;
+        width: 100%;
+        color: black;
+        font-size: 16px;
+        margin-left: 12px;
+
+        &::placeholder {
+            font-size: 14px;
+            color: black;
+            font-weight: 300;
+        }
+    }
+}
+.detailsTask{
+    width: 250px;
+    visibility: hidden;
+    background: white;
+    padding: 6px 0;
+    padding-inline: 24px;
+    border-radius: 24px;
+    position: absolute;
+    bottom: 80px;
+    left: 50%;
+    &__createWrapper{
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        background: rgba(240, 234, 234);
+        padding: 12px;
+        border-radius: 24px;
+    }
+}
+.detailsTask.active{
+    animation: AnimationToggleDetails 1s forwards;;
+}
