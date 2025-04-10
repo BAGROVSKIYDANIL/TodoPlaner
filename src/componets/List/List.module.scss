@@ -1,0 +1,21 @@
+.wrapperList{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    width: 250px;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    padding: 16px;
+    box-shadow: rgba(255, 255, 255, 0.05) -1px 0px 0px 0px inset;
+    background: rgb(32, 32, 32);
+    position: relative;
+    pointer-events: none;
+}
+.item{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    
+}
