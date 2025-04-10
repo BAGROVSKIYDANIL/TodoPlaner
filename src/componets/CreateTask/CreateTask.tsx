@@ -6,8 +6,8 @@ import { ITodo } from "./types";
 
 export const CreateTask = ({setTodos}: ITodo) => {
     const [name, setName] = useState<string>('');
-    // const [status, setStatus] = useState<'todo'|'in progress'| 'done'>();
-    // const [priority, setPriority] = useState<'low' | 'medium' | 'high'>();
+    const [status, setStatus] = useState<'todo'|'in progress'| 'done'>();
+    const [priority, setPriority] = useState<'low' | 'medium' | 'high'>();
     const [isOpenDetails, setIsOpenDetails] = useState<boolean>(false)
 
     const onKeyPressNameHandler = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -42,6 +42,14 @@ export const CreateTask = ({setTodos}: ITodo) => {
                         placeholder="Create new task" 
                     />                       
                 </div>     
+                <div className={styles.statusesWrapper}>
+                    <span className={styles.title}>Select the task status</span>
+                    <ul className={styles.statuses}>
+                        <li className={styles.statuses__item}>todo</li>
+                        <li className={styles.statuses__item}>in progress</li>
+                        <li className={styles.statuses__item}>done</li>
+                    </ul>                    
+                </div>
                 {/* <Button className="taskSave">Save</Button>          */}
             </div>    
         </>
