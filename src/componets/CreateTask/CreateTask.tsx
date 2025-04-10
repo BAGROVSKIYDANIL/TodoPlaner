@@ -4,12 +4,14 @@ import Button from '../Button/Button';
 import { FaPlus } from 'react-icons/fa6';
 import { ITodo } from "./types";
 
+type Status = 'todo'|'in progress'| 'done';
+
 export const CreateTask = ({setTodos}: ITodo) => {
     const [name, setName] = useState<string>('');
-    const [status, setStatus] = useState<'todo'|'in progress'| 'done'>();
-    const [priority, setPriority] = useState<'low' | 'medium' | 'high'>();
+    const [selectedStatus, setStatus] = useState<Status>();
+    // const [priority, setPriority] = useState<'low' | 'medium' | 'high'>();
     const [isOpenDetails, setIsOpenDetails] = useState<boolean>(false)
-
+    const statusList:Status[] = ['todo','in progress','done']
     const onKeyPressNameHandler = (e: React.KeyboardEvent<HTMLInputElement>) => {
 
         if (e.key === 'Enter'){
@@ -22,6 +24,10 @@ export const CreateTask = ({setTodos}: ITodo) => {
             setName('')
         }
     }    
+
+    const handleSelectStatus = (status: Status) =>{
+        setStatus(status)
+    }
 
     return (
         <>
@@ -45,9 +51,13 @@ export const CreateTask = ({setTodos}: ITodo) => {
                 <div className={styles.statusesWrapper}>
                     <span className={styles.title}>Select the task status</span>
                     <ul className={styles.statuses}>
-                        <li className={styles.statuses__item}>todo</li>
-                        <li className={styles.statuses__item}>in progress</li>
-                        <li className={styles.statuses__item}>done</li>
+                        {statusList.map(status =>(
+                            <li 
+                                className={`${styles.statuses__item} ${selectedStatus === status ? styles.selected : ''}`}
+                                key={status}
+                                onClick={() => handleSelectStatus(status)}
+                                >{status}</li>
+                        ))}
                     </ul>                    
                 </div>
                 {/* <Button className="taskSave">Save</Button>          */}
