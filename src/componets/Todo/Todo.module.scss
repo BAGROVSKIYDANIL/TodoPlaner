@@ -1,0 +1,75 @@
+h1{
+    text-align: center;
+}
+.text{
+    color: white;
+    margin-left: 12px;
+}
+.todoList{
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    gap: 12px;
+    padding-inline: 40px
+}
+.todoItem{
+    display: flex;
+    align-items: center;
+    padding-inline: 6px;
+    height: 36px;
+    border-radius: 6px;
+    border: 1px solid red;
+    background: rgb(116, 114, 114);
+    border: 1px solid rgb(143, 138, 141);
+}
+
+.checkbox {
+    display: inline-flex;
+    align-items: center;
+    column-gap: 8px;
+    user-select: none;
+    cursor: pointer;
+
+    &__input {
+        display: none;
+    }
+
+    &__indicator {
+        width: 16px;
+        height: 16px;
+        position: relative;
+        background: transparent;
+        display: block;
+        border: 1px solid white;
+        border-radius: 4px;
+        cursor: pointer;
+        pointer-events: none;
+        transition: 150ms ease-in-out;
+    }
+
+    &__indicator_active {
+        width: 15px;
+        height: 12px;
+        position: absolute;
+        top: calc(50% - 2px);
+        left: calc(50% + 3px);
+        transform: translate(-50%, -50%);
+        color: #7B76FF;
+        z-index: 1;
+        transition: opacity 100ms ease-in-out;
+
+        .path {
+            stroke-dasharray: 20;
+            stroke-dashoffset: 20;
+            transition: all 150ms ease-in-out;
+        }
+    }
+
+    &__input:checked + &__indicator {
+        border-color: #7B76FF;
+
+        .path {
+            stroke-dashoffset: 0;
+        }
+    }
+}
