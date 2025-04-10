@@ -1,6 +1,8 @@
 import styles from './Todo.module.scss'
 import { IProps } from '../../types';
+import { FaRegTrashCan } from "react-icons/fa6";
 import { useState } from 'react';
+import Button from '../Button/Button';
 
 export const ToDoItem = ({todo}:IProps) => {
     const [isChecked, setIsChecked] = useState(false)
@@ -21,6 +23,11 @@ export const ToDoItem = ({todo}:IProps) => {
                     </span>
                 </label>                 
             <span className={styles.text}>{todo.name}</span>
+            <div className={styles.todoItem__details}>
+                <Button>
+                    <FaRegTrashCan size={20}/>
+                </Button>
+            </div>
         </div>
     );
 };
