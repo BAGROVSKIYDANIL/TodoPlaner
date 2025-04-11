@@ -46,6 +46,9 @@
     }
 }
 .detailsTask{
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
     width: 250px;
     visibility: hidden;
     background: white;
@@ -62,6 +65,43 @@
         background: rgba(240, 234, 234);
         padding: 12px;
         border-radius: 24px;
+    }
+}
+.title{
+    font-size: 16px;
+    color: black;
+}
+.priorityWrapper{
+    display: flex;
+    flex-direction: column;
+}
+.priority{
+    display: flex;
+    gap: 6px;
+    padding: 0;
+    margin: 0;
+    &__item.selected{
+        background: #e35656!important;
+        transition: background 0.2s ease, color 0.2s ease;
+        color: white;
+    }
+    &__item{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        color: black;
+        width: fit-content;
+        padding: 4px 6px;
+        list-style: none;
+        border-radius: 16px;
+        background: #ed9696;
+        cursor: pointer;
+        &:hover{
+            background: #e35656;
+            transition: background 0.2s ease, color 0.2s ease;
+            color: white;
+        }
     }
 }
 .detailsTask.active{

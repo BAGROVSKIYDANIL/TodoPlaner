@@ -5,13 +5,15 @@ import { FaPlus } from 'react-icons/fa6';
 import { ITodo } from "./types";
 
 type Status = 'todo'|'in progress'| 'done';
-
+type Priority = 'low'|'medium'|'high'
 export const CreateTask = ({setTodos}: ITodo) => {
     const [name, setName] = useState<string>('');
     const [selectedStatus, setStatus] = useState<Status>();
-    // const [priority, setPriority] = useState<'low' | 'medium' | 'high'>();
+    const [selectedPriority, setPriority] = useState<'low' | 'medium' | 'high'>();
     const [isOpenDetails, setIsOpenDetails] = useState<boolean>(false)
     const statusList:Status[] = ['todo','in progress','done']
+    const priorityList: Priority[] = ['low','medium', 'high']
+
     const onKeyPressNameHandler = (e: React.KeyboardEvent<HTMLInputElement>) => {
 
         if (e.key === 'Enter'){
@@ -28,7 +30,9 @@ export const CreateTask = ({setTodos}: ITodo) => {
     const handleSelectStatus = (status: Status) =>{
         setStatus(status)
     }
-
+    const handleSelectPriority = (priority: Priority) => {
+        setPriority(priority)
+    }
     return (
         <>
             <div className={styles.newTask}>
@@ -48,15 +52,15 @@ export const CreateTask = ({setTodos}: ITodo) => {
                         placeholder="Create new task" 
                     />                       
                 </div>     
-                <div className={styles.statusesWrapper}>
+                <div className={styles.priorityWrapper}>
                     <span className={styles.title}>Select the task status</span>
-                    <ul className={styles.statuses}>
-                        {statusList.map(status =>(
+                    <ul className={styles.priority}>
+                        {priorityList.map(priority =>(
                             <li 
-                                className={`${styles.statuses__item} ${selectedStatus === status ? styles.selected : ''}`}
-                                key={status}
-                                onClick={() => handleSelectStatus(status)}
-                                >{status}</li>
+                                className={`${styles.priority__item} ${selectedPriority === priority ? styles.selected : ''}`}
+                                key={priority}
+                                onClick={() => handleSelectPriority(priority)}
+                                >{priority}</li>
                         ))}
                     </ul>                    
                 </div>
