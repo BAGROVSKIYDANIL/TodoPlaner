@@ -1,17 +1,24 @@
 import styles from './Todo.module.scss'
-import { IProps } from '../../types';
+import { Priority } from '../../types';
 import { FaRegTrashCan } from "react-icons/fa6";
 import { useState } from 'react';
 import Button from '../Button/Button';
+import { ITodoItemProps } from './inreface';
 
-export const ToDoItem = ({todo}:IProps) => {
-    const [isChecked, setIsChecked] = useState(false)
+export const ToDoItem:React.FC<ITodoItemProps> = ({todo, deleteTask}) => {
+    const [isChecked, setIsChecked] = useState(false);
+    const priorityClasses: Record<Priority, string>  = {
+        high: styles.priorityHigh,
+        medium: styles.priorityMedium,
+        low: styles.priorityLow,
+        }
     const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     {
         e.stopPropagation()
             const checked = e.target.checked;
             setIsChecked(checked)
-    }    
+    }
+        
     return (
         <div className={styles.todoItem}>
                 <label key={todo._id} className={styles.checkbox} onClick={(e) => e.stopPropagation()}>
@@ -22,12 +29,14 @@ export const ToDoItem = ({todo}:IProps) => {
                         </svg>
                     </span>
                 </label>                 
-            <span className={styles.text}>{todo.name}</span>
-            <div className={styles.todoItem__details}>
-                <Button>
-                    <FaRegTrashCan size={20}/>
-                </Button>
-            </div>
+                <span className={styles.text}>{todo.name}</span>
+                <div className={styles.detailsTask}>
+                    <span className={`${styles.detailsTask__priority} ${todo.priority !== null ? priorityClasses[todo.priority] : ''}`}>{todo.priority}</span>
+                    <div className={styles.detailsTask__status}></div>
+                    <Button onClick={() => deleteTask(todo._id)}>
+                        <FaRegTrashCan size={20}/>
+                    </Button>
+                </div>
         </div>
     );
 };
