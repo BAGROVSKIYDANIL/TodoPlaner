@@ -6,7 +6,7 @@ import { ITodoItem } from "../../types";
 
 export const ToDo = () => {
     const [todos, setTodos] = useState<ITodoItem[]>([])
-
+    
     useEffect(() =>{
     const storedTodos = localStorage.getItem('todo')
         if(storedTodos){
@@ -19,11 +19,25 @@ export const ToDo = () => {
             }
         }
     }, [])
+
+    const deleteTask = (index:number) => {
+        setTodos(prev => {
+            const taskList = [...prev];
+            taskList.splice(index, 1)
+            localStorage.setItem('todo', JSON.stringify(taskList));
+            return taskList
+        })
+    }
     return (
         <>
             <div className={styles.todoList}>
                 <h1>Todo App</h1>
-                {todos.map(todo => <ToDoItem key={`_todo_${todo._id}`} todo={todo}/>)}
+                {todos.map(todo => 
+                <ToDoItem 
+                key={`_todo_${todo._id}`} 
+                todo={todo}
+                deleteTask={deleteTask}/>
+                )}
 
             </div>    
             <CreateTask setTodos={setTodos}/>
