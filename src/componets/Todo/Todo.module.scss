@@ -4,6 +4,8 @@ h1{
 .text{
     color: white;
     margin-left: 12px;
+    max-width: 400px;
+    white-space: pre-wrap
 }
 .todoList{
     display: flex;
@@ -15,14 +17,81 @@ h1{
 .todoItem{
     display: flex;
     align-items: center;
-    padding-inline: 6px;
-    height: 36px;
+    padding: 6px;
     border-radius: 6px;
     border: 1px solid red;
     background: rgb(116, 114, 114);
     border: 1px solid rgb(143, 138, 141);
+    position: relative;
 }
+.title{
+    display: flex;
+    align-items: center;
+    font-size: 16px;
 
+}
+.sorted{
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    padding-right: 6px;
+    position: relative;
+    z-index: 6;
+    gap: 8px;
+    &__wrapper{
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        position: absolute;
+        padding: 10px 12px;
+        background: white;
+        border-radius: 6px;
+        z-index: 2;
+        top: 50%;
+        right: 0;
+        opacity: 0;
+        transform: translateY(-10px);
+        visibility: hidden;
+        transition: 0.3s;
+    }
+    &__wrapper.active{
+        opacity: 1;
+        transform: translateY(0);
+        visibility: visible;        
+    }
+    &__item{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        line-height: 24px;
+        font-size: 14px;
+        color: black;
+        list-style: none;
+    }
+}
+.detailsTask{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: absolute;
+    right: 6px;
+    &__priority{
+        border-radius: 6px;
+        padding: 2px 6px;
+        text-transform: uppercase;
+        width: fit-content;
+        height: fit-content;
+    }
+    &__status{
+        text-transform: uppercase;
+        width: fit-content;
+        height: fit-content;
+        border-radius: 12px;
+        padding: 2px 12px;
+        
+    }
+}
 .checkbox {
     display: inline-flex;
     align-items: center;
@@ -72,4 +141,34 @@ h1{
             stroke-dashoffset: 0;
         }
     }
+}
+.priorityHigh{
+    background: red;
+}
+.priorityMedium{
+    background: rgb(221, 184, 115);
+}
+.priorityLow{
+    background: green;
+}
+.todo{
+    background: #0000FF;
+}
+.inProgress{
+    background: #e5e526;
+}
+.done{
+    background: #13ca56;
+}
+.editInput{
+    padding: 0;
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: 16px;
+    margin-left: 12px;
+    overflow: hidden;
+    max-width: 400px;
+    width: 100%;
+    resize: none;
 }
