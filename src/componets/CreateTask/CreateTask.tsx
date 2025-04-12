@@ -2,16 +2,16 @@ import { useState } from "react";
 import styles from './CreateTask.module.scss'
 import Button from '../Button/Button';
 import { FaPlus } from 'react-icons/fa6';
-import { ITodo } from "./types";
+import { ITodo} from "./types";
+import { Priority } from "../../types";
 
-type Status = 'todo'|'in progress'| 'done';
-type Priority = 'low'|'medium'|'high'
+type Status = 'todo'|'in progress'| 'done' | null;
 export const CreateTask = ({setTodos}: ITodo) => {
     const [name, setName] = useState<string>('');
-    const [selectedStatus, setStatus] = useState<Status>();
-    const [selectedPriority, setPriority] = useState<'low' | 'medium' | 'high'>();
+    const [selectedStatus, setStatus] = useState<Status>(null);
+    const [selectedPriority, setPriority] = useState<Priority | null>(null);
     const [isOpenDetails, setIsOpenDetails] = useState<boolean>(false)
-    const statusList:Status[] = ['todo','in progress','done']
+    // const statusList:Status[] = ['todo','in progress','done']
     const priorityList: Priority[] = ['low','medium', 'high']
 
     const onKeyPressNameHandler = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -19,11 +19,13 @@ export const CreateTask = ({setTodos}: ITodo) => {
         if (e.key === 'Enter'){
             if(name.trim() === '') return
             setTodos(prev => {
-            const newTodos = [...prev, {_id: prev.length, name: name, isChecked: false}];
+            const newTodos = [...prev, {_id: prev.length, name: name, isChecked: false, priority: selectedPriority}];
             localStorage.setItem('todo', JSON.stringify(newTodos));
+            
             return newTodos;
             });
-            setName('')
+            setName('');
+            setPriority(null)
         }
     }    
 
