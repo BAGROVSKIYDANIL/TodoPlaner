@@ -28,6 +28,13 @@ export const ToDo = () => {
             return taskList
         })
     }
+    const editTask = (index: number, newName: string) => {
+        setTodos(prev => {
+            const editTaskList = prev.map((item, i) => i === index ? {...item, name: newName} : item)
+            localStorage.setItem('todo', JSON.stringify(editTaskList));
+            return editTaskList;
+        })
+    }
     return (
         <>
             <div className={styles.todoList}>
@@ -36,6 +43,7 @@ export const ToDo = () => {
                 <ToDoItem 
                 key={`_todo_${todo._id}`} 
                 todo={todo}
+                editTask={editTask}
                 deleteTask={deleteTask}/>
                 )}
 
