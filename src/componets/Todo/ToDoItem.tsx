@@ -1,5 +1,5 @@
 import styles from './Todo.module.scss'
-import { Priority } from '../../types';
+import { Priority, Status } from '../../types';
 import { FaRegTrashCan } from "react-icons/fa6";
 import { MdModeEditOutline } from "react-icons/md";
 import { FaCheck } from "react-icons/fa6";
@@ -17,6 +17,12 @@ export const ToDoItem:React.FC<ITodoItemProps> = ({todo, deleteTask, editTask}) 
         medium: styles.priorityMedium,
         low: styles.priorityLow,
         }
+    const statusesClasses: Record<Status, string> = {
+        todo: styles.todo,
+        "in progress": styles.inProgress,
+        done: styles.done
+    }
+    
     const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     {
         e.stopPropagation()
@@ -61,8 +67,8 @@ export const ToDoItem:React.FC<ITodoItemProps> = ({todo, deleteTask, editTask}) 
                     <span className={styles.text}>{todo.name}</span>
                 }
                 <div className={styles.detailsTask}>
-                    <span className={`${styles.detailsTask__priority} ${todo.priority !== null ? priorityClasses[todo.priority] : ''}`}>{todo.priority}</span>
-                    <div className={styles.detailsTask__status}></div>
+                    <span className={`${styles.detailsTask__status} ${ todo.status != null ? statusesClasses[todo.status] : ''}`}>{todo.status}</span>
+                    <span className={`${styles.detailsTask__priority} ${todo.priority != null ? priorityClasses[todo.priority] : ''}`}>{todo.priority}</span>
                     <Button className='basic' onClick={() => handleEditMesage()}>
                         <MdModeEditOutline size={20}/>
                     </Button>
