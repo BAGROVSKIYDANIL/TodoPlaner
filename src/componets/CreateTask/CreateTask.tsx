@@ -11,7 +11,7 @@ export const CreateTask = ({setTodos}: ITodo) => {
     const [selectedStatus, setStatus] = useState<Status>(null);
     const [selectedPriority, setPriority] = useState<Priority | null>(null);
     const [isOpenDetails, setIsOpenDetails] = useState<boolean>(false)
-    // const statusList:Status[] = ['todo','in progress','done']
+    const statusList:Status[] = ['todo','in progress','done']
     const priorityList: Priority[] = ['low','medium', 'high']
 
     const onKeyPressNameHandler = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -29,11 +29,12 @@ export const CreateTask = ({setTodos}: ITodo) => {
         }
     }    
 
-    const handleSelectStatus = (status: Status) =>{
-        setStatus(status)
-    }
-    const handleSelectPriority = (priority: Priority) => {
-        setPriority(priority)
+    const  handleSelectedDetailTask = (type: string ,detailsTask:Status | Priority) => {
+        if(type === 'status'){
+            setStatus(detailsTask as Status)
+        }else{
+            setPriority(detailsTask as Priority)
+        }
     }
     return (
         <>
@@ -55,16 +56,27 @@ export const CreateTask = ({setTodos}: ITodo) => {
                     />                       
                 </div>     
                 <div className={styles.priorityWrapper}>
-                    <span className={styles.title}>Select the task status</span>
+                    <span className={styles.title}>Select the task priority</span>
                     <ul className={styles.priority}>
                         {priorityList.map(priority =>(
                             <li 
                                 className={`${styles.priority__item} ${selectedPriority === priority ? styles.selected : ''}`}
                                 key={priority}
-                                onClick={() => handleSelectPriority(priority)}
+                                onClick={() => handleSelectedDetailTask('priority',priority)}
                                 >{priority}</li>
                         ))}
                     </ul>                    
+                </div>
+                <div className={styles.statusWrapper}>
+                    <div className={styles.title}>Select the task status</div>
+                    <ul className={styles.statuses}>
+                        {statusList.map(status => (
+                            <li 
+                                className={`${styles.statuses__item} ${selectedStatus === status ? styles.selected : ''}`}
+                                key={status}
+                                onClick={() => handleSelectedDetailTask('status',status)}>{status}</li>
+                        ))}
+                    </ul>
                 </div>
                 {/* <Button className="taskSave">Save</Button>          */}
             </div>    
