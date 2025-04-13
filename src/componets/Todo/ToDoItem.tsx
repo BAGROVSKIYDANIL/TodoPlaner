@@ -1,5 +1,5 @@
 import styles from './Todo.module.scss'
-import { Priority, Status } from '../../types';
+import { PriorityType, Status } from '../../types';
 import { FaRegTrashCan } from "react-icons/fa6";
 import { MdModeEditOutline } from "react-icons/md";
 import { FaCheck } from "react-icons/fa6";
@@ -12,7 +12,7 @@ export const ToDoItem:React.FC<ITodoItemProps> = ({todo, deleteTask, editTask}) 
     const [isChecked, setIsChecked] = useState(false);
     const [isEditTask, setIsEditTask] = useState<boolean>(false)
     const [textFiled, setTextFiled] = useState<string>('')
-    const priorityClasses: Record<Priority, string>  = {
+    const priorityClasses: Record<PriorityType, string>  = {
         high: styles.priorityHigh,
         medium: styles.priorityMedium,
         low: styles.priorityLow,
@@ -68,7 +68,7 @@ export const ToDoItem:React.FC<ITodoItemProps> = ({todo, deleteTask, editTask}) 
                 }
                 <div className={styles.detailsTask}>
                     <span className={`${styles.detailsTask__status} ${ todo.status != null ? statusesClasses[todo.status] : ''}`}>{todo.status}</span>
-                    <span className={`${styles.detailsTask__priority} ${todo.priority != null ? priorityClasses[todo.priority] : ''}`}>{todo.priority}</span>
+                    <span className={`${styles.detailsTask__priority} ${todo.priority != null ? priorityClasses[todo.priority.type] : ''}`}>{todo.priority?.type}</span>
                     <Button className='basic' onClick={() => handleEditMesage()}>
                         <MdModeEditOutline size={20}/>
                     </Button>
