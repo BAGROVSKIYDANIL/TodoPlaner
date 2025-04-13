@@ -23,10 +23,13 @@ export const ToDo = () => {
         }
     }, [])
 
-    const deleteTask = (index:number) => {
+    const deleteTask = (id:number) => {
         setTodos(prev => {
             const taskList = [...prev];
-            taskList.splice(index, 1)
+            const index = prev.findIndex(item => item._id === id)
+            if(index !== -1){
+                taskList.splice(index, 1)
+            }
             localStorage.setItem('todo', JSON.stringify(taskList));
             return taskList
         })
@@ -38,6 +41,8 @@ export const ToDo = () => {
             return editTaskList;
         })
     }
+    const test = [1]
+    console.log(test.splice(1, 1))
     return (
         <>
             <div className={styles.todoList}>
