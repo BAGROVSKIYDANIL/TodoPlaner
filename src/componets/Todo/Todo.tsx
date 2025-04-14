@@ -10,8 +10,9 @@ import Button from "../Button/Button";
 export const ToDo = () => {
     const [todos, setTodos] = useState<ITodoItem[]>([])
     const [isOpenFilter, setIsOpenFilter] = useState<boolean>(false);
+    
     useEffect(() =>{
-    const storedTodos = localStorage.getItem('todo')
+        const storedTodos = localStorage.getItem('todo')
         if(storedTodos){
             try{
                 const parsedTodos = JSON.parse(storedTodos);
@@ -41,8 +42,26 @@ export const ToDo = () => {
             return editTaskList;
         })
     }
-    const test = [1]
-    console.log(test.splice(1, 1))
+    const sortedPriorityTask = (arr:ITodoItem[], typeSort: string) => {
+        const newList = [...arr]
+        if(typeSort === 'Ascending'){
+            newList.sort((a:ITodoItem, b:ITodoItem):number =>   {
+                        if(a.priority != null && b.priority != null ){
+                            return a.priority.num - b.priority.num
+                        }
+                        return 0
+                })                
+        }        
+        if(typeSort === 'Descending'){
+           newList.sort((a:ITodoItem, b:ITodoItem):number => {
+                if(b.priority != null && a.priority != null){
+                    return b.priority.num - a.priority.num
+                }
+                return 0
+            })
+        }       
+        setTodos(newList)
+    }
     return (
         <>
             <div className={styles.todoList}>
@@ -53,8 +72,8 @@ export const ToDo = () => {
                         <CiFilter size={20}/>
                     </Button>
                     <ul className={`${styles.sorted__wrapper} ${isOpenFilter ? styles.active: ''}`}>
-                        <li className={styles.sorted__item}>Status<Button className="arrow"><FaArrowUp  size={16}/></Button></li>
-                        <li className={styles.sorted__item}>Status<Button className="arrow"><FaArrowDown  size={16}/></Button></li>
+                        <li className={styles.sorted__item}>Status<Button className="arrow" onClick={() => sortedPriorityTask(todos, 'Ascending')}><FaArrowUp  size={16}/></Button></li>
+                        <li className={styles.sorted__item}>Status<Button className="arrow" onClick={() => sortedPriorityTask(todos, 'Descending')}><FaArrowDown  size={16}/></Button></li>
                         <li className={styles.sorted__item}>Priority<Button className="arrow"><FaArrowUp  size={16}/></Button></li>
                         <li className={styles.sorted__item}>Priority<Button className="arrow"><FaArrowDown  size={16}/></Button></li>
                     </ul>
