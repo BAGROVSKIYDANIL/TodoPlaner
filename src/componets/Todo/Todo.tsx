@@ -72,10 +72,8 @@ export const ToDo = () => {
                         <CiFilter size={20}/>
                     </Button>
                     <ul className={`${styles.sorted__wrapper} ${isOpenFilter ? styles.active: ''}`}>
-                        <li className={styles.sorted__item}>Status<Button className="arrow" onClick={() => sortedPriorityTask(todos, 'Ascending')}><FaArrowUp  size={16}/></Button></li>
-                        <li className={styles.sorted__item}>Status<Button className="arrow" onClick={() => sortedPriorityTask(todos, 'Descending')}><FaArrowDown  size={16}/></Button></li>
-                        <li className={styles.sorted__item}>Priority<Button className="arrow"><FaArrowUp  size={16}/></Button></li>
-                        <li className={styles.sorted__item}>Priority<Button className="arrow"><FaArrowDown  size={16}/></Button></li>
+                        <li className={styles.sorted__item}>Priority<Button className="arrow"onClick={() => sortedPriorityTask(todos, 'Ascending')}><FaArrowUp  size={16}/></Button></li>
+                        <li className={styles.sorted__item}>Priority<Button className="arrow"onClick={() => sortedPriorityTask(todos, 'Descending')}><FaArrowDown  size={16}/></Button></li>
                     </ul>
                 </div>
                 {todos.map(todo => 
