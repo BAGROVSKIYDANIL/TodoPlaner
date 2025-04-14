@@ -10,7 +10,8 @@ import Button from "../Button/Button";
 export const ToDo = () => {
     const [todos, setTodos] = useState<ITodoItem[]>([])
     const [isOpenFilter, setIsOpenFilter] = useState<boolean>(false);
-    
+    const [isOpenStatusFilter, setIsOpeStatusFilter] = useState(false);
+
     useEffect(() =>{
         const storedTodos = localStorage.getItem('todo')
         if(storedTodos){
@@ -62,19 +63,43 @@ export const ToDo = () => {
         }       
         setTodos(newList)
     }
+    const sortedStatusTask  = (arr: ITodoItem[], status: string[]) => {
+        const newList = [...arr]
+        return newList.map(item => {
+            if(item.status != null){
+                if(status.includes(item.status)){
+                    return  item
+                }
+            }
+            return undefined
+        }).filter(item => item != null)
+    }
     return (
         <>
             <div className={styles.todoList}>
                 <h1>Todo App</h1>
                 <div className={styles.sorted}>
-                    <span className={styles.title}>Filter</span>
-                    <Button className="basic" onClick={() => setIsOpenFilter(!isOpenFilter)}>
-                        <CiFilter size={20}/>
-                    </Button>
-                    <ul className={`${styles.sorted__wrapper} ${isOpenFilter ? styles.active: ''}`}>
-                        <li className={styles.sorted__item}>Priority<Button className="arrow"onClick={() => sortedPriorityTask(todos, 'Ascending')}><FaArrowUp  size={16}/></Button></li>
-                        <li className={styles.sorted__item}>Priority<Button className="arrow"onClick={() => sortedPriorityTask(todos, 'Descending')}><FaArrowDown  size={16}/></Button></li>
-                    </ul>
+                    <div className={styles.sorted__status}>
+                        <span className={styles.title}>Show tasks with status:</span>
+                        <Button className="basic" onClick={() => setIsOpeStatusFilter(!isOpenStatusFilter)}>
+                            <CiFilter size={20}/>
+                        </Button>                        
+                        <ul className={`${styles.sorted__wrapper} ${isOpenStatusFilter ? styles.active : ''}`}>
+                            <li className={styles.sorted__item}>todo</li>
+                            <li className={styles.sorted__item}>in progress</li>
+                            <li className={styles.sorted__item}>done</li>
+                        </ul>
+                    </div>
+                    <div className={styles.sorted__priority}>
+                        <span className={styles.title}>Filter</span>
+                        <Button className="basic" onClick={() => setIsOpenFilter(!isOpenFilter)}>
+                            <CiFilter size={20}/>
+                        </Button>
+                        <ul className={`${styles.sorted__wrapper} ${isOpenFilter ? styles.active: ''}`}>
+                            <li className={styles.sorted__item}>Priority<Button className="arrow"onClick={() => sortedPriorityTask(todos, 'Ascending')}><FaArrowUp  size={16}/></Button></li>
+                            <li className={styles.sorted__item}>Priority<Button className="arrow"onClick={() => sortedPriorityTask(todos, 'Descending')}><FaArrowDown  size={16}/></Button></li>
+                        </ul>                        
+                    </div>
                 </div>
                 {todos.map(todo => 
                 <ToDoItem 
