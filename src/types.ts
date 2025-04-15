@@ -10,7 +10,7 @@ export interface ITodoItem {
     name: string;
     isChecked: boolean;
     priority?: Priority | null;
-    status?: Status | null | undefined;
+    status?: Status | null;
 }
 export interface IProps{
     todo: ITodoItem;
