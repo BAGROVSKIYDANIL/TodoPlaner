@@ -4,6 +4,7 @@ import styles from './Todo.module.scss'
 import { CreateTask } from "../CreateTask/CreateTask";
 import { CiFilter } from "react-icons/ci";
 import { FaArrowUp, FaArrowDown } from "react-icons/fa";
+import { IoCloseOutline } from "react-icons/io5";
 import { ITodoItem, Status } from "../../types";
 import Button from "../Button/Button";
 
@@ -11,6 +12,7 @@ export const ToDo = () => {
     const [todos, setTodos] = useState<ITodoItem[]>([])
     const [isOpenFilter, setIsOpenFilter] = useState<boolean>(false);
     const [isOpenStatusFilter, setIsOpeStatusFilter] = useState(false);
+    const [selectedStatus, setSelectedStatus] = useState<string | null>(null)
     const statusList:Status[] = ['todo', 'in progress', 'done'];
     useEffect(() =>{
         const storedTodos = localStorage.getItem('todo')
@@ -63,22 +65,28 @@ export const ToDo = () => {
         }       
         setTodos(newList)
     }
-    const sortedStatusTask  = (arr: ITodoItem[], status: string[]) => {
-        const storageList = localStorage.getItem('todo');
-       const parsedTodos:ITodoItem[] = storageList != null ? JSON.parse(storageList) : null;
-
-        const sortedList =  parsedTodos.map(item => {
-            if(item.status != null){
-                if(status.includes(item.status)){
-                    return  item
-                }
+    const handleStatusClick = (status: string) => {
+        setSelectedStatus(prev => {
+            if(prev === status){
+                return null
             }
-            return undefined
-        }).filter(item => item != null)
-        setTodos(sortedList.length === 0 ? parsedTodos : sortedList )
-
+            else {
+                return status
+            }
+        })
     }
-    
+    useEffect(() => {
+        if(selectedStatus){
+            const sortedList = todos.filter(item => item?.status === selectedStatus);
+            setTodos(sortedList);
+        }else {
+            // Если статус не выбран, показываем все задачи
+            const storageList = localStorage.getItem('todo');
+            const parsedTodos: ITodoItem[] = storageList != null ? JSON.parse(storageList) : [];
+            setTodos(parsedTodos);
+        }
+    },[selectedStatus])
+
     return (
         <>
             <div className={styles.todoList}>
@@ -91,7 +99,10 @@ export const ToDo = () => {
                         </Button>                        
                         <ul className={`${styles.sorted__wrapper} ${isOpenStatusFilter ? styles.active : ''}`}>
                             {statusList.map(status => (
-                                <li className={styles.sorted__item} onClick={() => sortedStatusTask(todos, [status])}>{status}</li>
+                                <li className={styles.sorted__item} onClick={() => handleStatusClick(status)}>
+                                    {status}
+                                    {selectedStatus && <IoCloseOutline />}
+                                </li>
                             ))}
                         </ul>
                     </div>
