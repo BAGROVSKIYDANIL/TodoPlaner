@@ -4,14 +4,14 @@ import styles from './Todo.module.scss'
 import { CreateTask } from "../CreateTask/CreateTask";
 import { CiFilter } from "react-icons/ci";
 import { FaArrowUp, FaArrowDown } from "react-icons/fa";
-import { ITodoItem } from "../../types";
+import { ITodoItem, Status } from "../../types";
 import Button from "../Button/Button";
 
 export const ToDo = () => {
     const [todos, setTodos] = useState<ITodoItem[]>([])
     const [isOpenFilter, setIsOpenFilter] = useState<boolean>(false);
     const [isOpenStatusFilter, setIsOpeStatusFilter] = useState(false);
-
+    const statusList:Status[] = ['todo', 'in progress', 'done'];
     useEffect(() =>{
         const storedTodos = localStorage.getItem('todo')
         if(storedTodos){
@@ -64,8 +64,10 @@ export const ToDo = () => {
         setTodos(newList)
     }
     const sortedStatusTask  = (arr: ITodoItem[], status: string[]) => {
-        const newList = [...arr]
-        return newList.map(item => {
+        const storageList = localStorage.getItem('todo');
+       const parsedTodos:ITodoItem[] = storageList != null ? JSON.parse(storageList) : null;
+
+        const sortedList =  parsedTodos.map(item => {
             if(item.status != null){
                 if(status.includes(item.status)){
                     return  item
@@ -73,7 +75,10 @@ export const ToDo = () => {
             }
             return undefined
         }).filter(item => item != null)
+        setTodos(sortedList.length === 0 ? parsedTodos : sortedList )
+
     }
+    
     return (
         <>
             <div className={styles.todoList}>
@@ -85,9 +90,9 @@ export const ToDo = () => {
                             <CiFilter size={20}/>
                         </Button>                        
                         <ul className={`${styles.sorted__wrapper} ${isOpenStatusFilter ? styles.active : ''}`}>
-                            <li className={styles.sorted__item}>todo</li>
-                            <li className={styles.sorted__item}>in progress</li>
-                            <li className={styles.sorted__item}>done</li>
+                            {statusList.map(status => (
+                                <li className={styles.sorted__item} onClick={() => sortedStatusTask(todos, [status])}>{status}</li>
+                            ))}
                         </ul>
                     </div>
                     <div className={styles.sorted__priority}>
