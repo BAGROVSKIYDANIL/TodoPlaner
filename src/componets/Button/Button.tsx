@@ -1,7 +1,9 @@
 import { IButton } from "./types";
 import  './Button.scss'
+import React from "react";
 
 const Button = ({onClick, disabled, className, children}:IButton) => {
+    console.log('button render')
     return (
         <button 
             onClick={onClick}
@@ -12,4 +14,4 @@ const Button = ({onClick, disabled, className, children}:IButton) => {
     );
 };
 
-export default Button;
+export default React.memo(Button);
