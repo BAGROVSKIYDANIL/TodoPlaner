@@ -10,6 +10,7 @@ export const CreateTask = ({setTodos}: ITodo) => {
     const [selectedStatus, setStatus] = useState<Status | null>(null);
     const [selectedPriority, setPriority] = useState<Priority | null>(null);
     const [isOpenDetails, setIsOpenDetails] = useState<boolean>(false)
+    const [description, setDescription] = useState<string>('')
     const statusList:Status[] = ['todo','in progress','done']
     const priorityList: PriorityType[] = ['low','medium', 'high']
 
@@ -19,7 +20,7 @@ export const CreateTask = ({setTodos}: ITodo) => {
         if (e.key === 'Enter'){
             if(name.trim() === '') return
             setTodos(prev => {
-            const newTodos = [...prev, {_id: prev.length, name: name, isChecked: false, priority: selectedPriority, status: selectedStatus}];
+            const newTodos = [...prev, {_id: prev.length, name: name, isChecked: false, priority: selectedPriority, status: selectedStatus, description: description}];
             localStorage.setItem('todo', JSON.stringify(newTodos));
             
             return newTodos;
@@ -36,6 +37,10 @@ export const CreateTask = ({setTodos}: ITodo) => {
         }else{
             setPriority({type:detailsTask as PriorityType, num: numPriority})
         }
+    }
+    const handleTextAreaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+        const value = e.currentTarget.value;
+        setDescription(value)
     }
     return (
         <>
@@ -78,6 +83,16 @@ export const CreateTask = ({setTodos}: ITodo) => {
                                 onClick={() => handleSelectedDetailTask('status',status, index + 1)}>{status}</li>
                         ))}
                     </ul>
+                </div>
+                <div className={styles.description}>
+                    <span className={styles.title}>Enter a description task:</span>
+                    <div className={styles.description__wrapper}>
+                        <textarea 
+                            placeholder="Enter a description task" 
+                            className={styles.description__item}
+                            onChange={(e) => handleTextAreaChange(e)}
+                            value={description}/>                       
+                    </div>
                 </div>
                 {/* <Button className="taskSave">Save</Button>          */}
             </div>    
