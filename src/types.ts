@@ -11,7 +11,7 @@ export interface ITodoItem {
     isChecked: boolean;
     priority?: Priority | null;
     status?: Status | null;
-    description: string;
+    description: string | null;
 }
 export interface IProps{
     todo: ITodoItem;
