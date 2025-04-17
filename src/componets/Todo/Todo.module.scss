@@ -1,11 +1,20 @@
 h1{
     text-align: center;
 }
-.text{
-    color: white;
+.infoTask{
+    display: flex;
     margin-left: 12px;
-    max-width: 400px;
-    white-space: pre-wrap
+    gap: 12px;
+    &__text {
+        color: white;
+        max-width: 400px;
+        white-space: pre-wrap
+    }
+    &__description{
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
 }
 .todoList{
     display: flex;
@@ -13,6 +22,40 @@ h1{
     flex-direction: column;
     gap: 12px;
     padding-inline: 40px
+}
+.description {
+    position: absolute;
+    width: fit-content;
+    height: fit-content;
+    border-radius: 12px;
+    background: white;
+    max-width: 50%;
+    bottom: -70px;
+    z-index: 2;
+    left: 25%;
+    right: 0;
+    color: black;
+    padding: 8px;
+    border: 1px solid #dd8717;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    user-select: none;
+    &::before,
+    &::after{
+        display: block;
+        content: '';
+        position: absolute;
+        width: 2px;
+        left: 15px;
+        border: 10px solid transparent;
+    }
+}
+.description::before{
+    top: -20px;
+    border-bottom: 10px solid #dd8717;
+}
+.description::after{
+    top: -19px;
+    border-bottom: 10px solid #fff;
 }
 .todoItem{
     display: flex;
@@ -37,7 +80,28 @@ h1{
     padding-right: 6px;
     position: relative;
     z-index: 6;
-    gap: 8px;
+    gap: 20px;
+    &__status{
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    & .sorted__item{
+            text-transform: uppercase;
+            cursor: pointer;
+            color: #495057;
+            width: fit-content;
+            &:hover{
+                text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+                color: black;
+            }
+        }
+
+    }
+    &__priority{
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
     &__wrapper{
         display: flex;
         flex-direction: column;

@@ -97,9 +97,7 @@ export const ToDoItem:React.FC<ITodoItemProps> = ({todo, deleteTask, editTask}) 
                     </div>
                     {
                         showDescription &&
-                        <div ref={descriptionRef} className={styles.description}>
-                            <span>За то что он должен денег и ведет себя не приемлеммо. Возможно групповое избиение</span>
-                        </div>                    
+                        <div ref={descriptionRef} className={styles.description}>{todo.description}</div>                    
                     }
             </div>     
 
