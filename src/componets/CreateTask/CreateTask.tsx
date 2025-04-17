@@ -10,14 +10,13 @@ export const CreateTask = ({setTodos}: ITodo) => {
     const [selectedStatus, setStatus] = useState<Status | null>(null);
     const [selectedPriority, setPriority] = useState<Priority | null>(null);
     const [isOpenDetails, setIsOpenDetails] = useState<boolean>(false)
-    const [description, setDescription] = useState<string>('')
+    const [description, setDescription] = useState<string | null>(null)
     const statusList:Status[] = ['todo','in progress','done']
     const priorityList: PriorityType[] = ['low','medium', 'high']
 
 
-    const onKeyPressNameHandler = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const handleCreateTask = () => {
 
-        if (e.key === 'Enter'){
             if(name.trim() === '') return
             setTodos(prev => {
             const newTodos = [...prev, {_id: prev.length, name: name, isChecked: false, priority: selectedPriority, status: selectedStatus, description: description}];
@@ -28,7 +27,6 @@ export const CreateTask = ({setTodos}: ITodo) => {
             setName('');
             setPriority(null)
             setStatus(null)
-        }
     }    
 
     const  handleSelectedDetailTask = (type:string ,detailsTask:Status | PriorityType, numPriority: number) => {
@@ -57,8 +55,7 @@ export const CreateTask = ({setTodos}: ITodo) => {
                         type="text" 
                         value={name} 
                         onChange={e => setName(e.target.value)}
-                        onKeyDown={onKeyPressNameHandler}
-                        placeholder="Create new task" 
+                        placeholder="Create new task title" 
                     />                       
                 </div>     
                 <div className={styles.priorityWrapper}>
@@ -91,10 +88,10 @@ export const CreateTask = ({setTodos}: ITodo) => {
                             placeholder="Enter a description task" 
                             className={styles.description__item}
                             onChange={(e) => handleTextAreaChange(e)}
-                            value={description}/>                       
+                            value={description ?? ''}/>                       
                     </div>
                 </div>
-                {/* <Button className="taskSave">Save</Button>          */}
+                <Button className="taskSave" onClick={handleCreateTask}>Create</Button>         
             </div>    
         </>
     );
