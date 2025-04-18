@@ -6,7 +6,7 @@
             }
         
             to {
-                height: 300px;
+                height: auto;
                 visibility: visible;
             }
 }
@@ -107,7 +107,7 @@
     }
 }
 .detailsTask.active{
-    animation: AnimationToggleDetails 1s forwards;;
+    animation: AnimationToggleDetails  forwards;
 }
 .description{
     display: flex;
@@ -126,6 +126,7 @@
         border-radius: 6px;
         width: 100%;
         height: 100%;
+        min-height: 100px;
         outline: none;
         padding: 4px;
         color: black;
