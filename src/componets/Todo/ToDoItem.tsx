@@ -4,12 +4,12 @@ import { FaRegTrashCan, FaCheck } from "react-icons/fa6";
 import { MdModeEditOutline } from "react-icons/md";
 import { FaEye } from "react-icons/fa";
 import { BsThreeDotsVertical } from "react-icons/bs";
-import { useState, useRef } from 'react';
+import { useState, useRef, memo, useCallback } from 'react';
 import { useClickOutside } from '../../hooks/useClickOutside';
 import Button from '../Button/Button';
-import { ITodoItemProps } from './inreface';
+import { ITodoItemProps } from './TodoInreface';
 
-export const ToDoItem:React.FC<ITodoItemProps> = ({todo, deleteTask, editTask}) => {
+export const ToDoItem:React.FC<ITodoItemProps> = memo(({todo, deleteTask, editTask}) => {
     const [isChecked, setIsChecked] = useState(false);
     const [isEditTask, setIsEditTask] = useState<boolean>(false)
     const [textFiled, setTextFiled] = useState<string>('')
@@ -30,24 +30,25 @@ export const ToDoItem:React.FC<ITodoItemProps> = ({todo, deleteTask, editTask}) 
     useClickOutside({ref: descriptionRef, callBack: () => {
         if (showDescription) setTimeout(() => setShowDescription(false), 50)
     }})
-    const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+    const handleCheckboxChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) =>
     {
         e.stopPropagation()
             const checked = e.target.checked;
             setIsChecked(checked)
-    }
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => 
+    },[])
+    const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => 
     {
         setTextFiled(e.target.value);
-    };        
-    const handleEditMesage = () => {
+    },[]);        
+    const handleEditMesage = useCallback(() => {
         setTextFiled(todo.name)
         setIsEditTask(true)
-    }
-    const successEditMessage = () => {
+    },[])
+    const successEditMessage = useCallback(() => {
             setIsEditTask(false)
             editTask(todo._id, textFiled)
-    }
+    },[])
+    
     return (
         <>
             <div className={styles.todoItem}>
@@ -72,15 +73,15 @@ export const ToDoItem:React.FC<ITodoItemProps> = ({todo, deleteTask, editTask}) 
                             </Button>                    
                         </>
                         :
-                    <div className={styles.infoTask}>
-                        <span className={styles.infoTask__text}>{todo.name}</span>|
-                        <div className={styles.infoTask__description}>
-                            Desctiption: 
-                            <Button className='basic' onClick={() => setShowDescription(!showDescription)}>
-                                <FaEye size={18}/>
-                            </Button>
+                        <div className={styles.infoTask}>
+                            <span className={styles.infoTask__text}>{todo.name}</span>|
+                            <div className={styles.infoTask__description}>
+                                Desctiption: 
+                                <Button className='basic' onClick={() => setShowDescription(!showDescription)}>
+                                    <FaEye size={18}/>
+                                </Button>
+                            </div>
                         </div>
-                    </div>
                     }
                     <div className={styles.detailsTask}>
                         <span className={`${styles.detailsTask__status} ${ todo.status != null ? statusesClasses[todo.status] : ''}`}>{todo.status}</span>
@@ -95,12 +96,17 @@ export const ToDoItem:React.FC<ITodoItemProps> = ({todo, deleteTask, editTask}) 
                             <BsThreeDotsVertical size={20}/>
                         </Button>
                     </div>
-                    {
-                        showDescription &&
+                    {showDescription &&
                         <div ref={descriptionRef} className={styles.description}>{todo.description}</div>                    
                     }
             </div>     
 
         </>
     );
-};
+}, (prevProps, nextProps) => {
+    return(
+    prevProps.todo === nextProps.todo &&
+    prevProps.deleteTask === nextProps.deleteTask &&
+    prevProps.editTask === nextProps.editTask        
+    )
+});
