@@ -1,4 +1,4 @@
-import { memo, useCallback, useMemo, useState } from "react";
+import { memo, useCallback, useMemo, useState, useRef } from "react";
 import styles from './CreateTask.module.scss'
 import Button from '../Button/Button';
 import { FaPlus } from 'react-icons/fa6';
@@ -6,28 +6,31 @@ import { ITodo} from "./types";
 import { PriorityType, Priority,Status } from "../../types";
 
 export const CreateTask = memo(({setTodos}: ITodo) => {
-    const [name, setName] = useState<string>('');
+    const inputRef = useRef<HTMLInputElement>(null)
+    const textAreaRef = useRef<HTMLTextAreaElement>(null)
     const [selectedStatus, setStatus] = useState<Status | null>(null);
     const [selectedPriority, setPriority] = useState<Priority | null>(null);
     const [isOpenDetails, setIsOpenDetails] = useState<boolean>(false)
-    const [description, setDescription] = useState<string | null>(null)
     const statusList:Status[] = ['todo','in progress','done']
     const priorityList: PriorityType[] = ['low','medium', 'high']
 
 
-    const handleCreateTask = () => {
-
-            if(name.trim() === '') return
-            setTodos(prev => {
-            const newTodos = [...prev, {_id: prev.length, name: name, isChecked: false, priority: selectedPriority, status: selectedStatus, description: description}];
-            localStorage.setItem('todo', JSON.stringify(newTodos));
-            
-            return newTodos;
-            });
-            setName('');
-            setPriority(null)
-            setStatus(null)
-    }  
+    const handleCreateTask = useCallback(() => {
+            if(inputRef.current?.value.trim() === '') return
+            if(inputRef.current && textAreaRef.current){
+                
+                setTodos(prev => {
+                const newTodos = [...prev, {_id: prev.length, name: inputRef.current?.value ?? '', isChecked: false, priority: selectedPriority, status: selectedStatus, description: textAreaRef.current?.value ?? ''}];
+                localStorage.setItem('todo', JSON.stringify(newTodos));
+                
+                return newTodos;
+                });
+                inputRef.current.value = ''
+                textAreaRef.current.value =''
+                setPriority(null)
+                setStatus(null)                
+            }                
+    },[setTodos])  
 
     const  handleSelectedDetailTask = useCallback((type:string ,detailsTask:Status | PriorityType, numPriority: number) => {
         if(type === 'status'){
@@ -36,10 +39,7 @@ export const CreateTask = memo(({setTodos}: ITodo) => {
             setPriority({type:detailsTask as PriorityType, num: numPriority})
         }
     },[])
-    const handleTextAreaChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
-        const value = e.currentTarget.value;
-        setDescription(value)
-    },[])
+
     const openDetails = useCallback(() => setIsOpenDetails(prev => !prev), [])
 
     return (
@@ -55,9 +55,8 @@ export const CreateTask = memo(({setTodos}: ITodo) => {
                     <div className={styles.detailsTask__createWrapper}>
                         <input 
                             className={styles.newTask__input} 
+                            ref={inputRef}
                             type="text" 
-                            value={name} 
-                            onChange={e => setName(e.target.value)}
                             placeholder="Create new task title" 
                         />                       
                     </div>     
@@ -87,11 +86,11 @@ export const CreateTask = memo(({setTodos}: ITodo) => {
                     <div className={styles.description}>
                         <span className={styles.title}>Enter a description task:</span>
                         <div className={styles.description__wrapper}>
-                            <textarea 
+                            <textarea
+                                ref={textAreaRef} 
                                 placeholder="Enter a description task" 
                                 className={styles.description__item}
-                                onChange={(e) => handleTextAreaChange(e)}
-                                value={description ?? ''}/>                       
+                                />                       
                         </div>
                     </div>
                     <Button className="taskSave" onClick={handleCreateTask}>Create</Button>         
