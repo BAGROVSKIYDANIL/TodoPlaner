@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { ToDoItem } from "./ToDoItem";
 import styles from './Todo.module.scss'
 import { CreateTask } from "../CreateTask/CreateTask";
@@ -16,6 +16,7 @@ export const ToDo = () => {
     const statusList:Status[] = ['todo', 'in progress', 'done'];
     useEffect(() =>{
         const storedTodos = localStorage.getItem('todo')
+        console.log('efect render')
         if(storedTodos){
             try{
                 const parsedTodos = JSON.parse(storedTodos);
@@ -27,7 +28,7 @@ export const ToDo = () => {
         }
     }, [])
 
-    const deleteTask = (id:number) => {
+    const deleteTask = useCallback((id:number) => {
         setTodos(prev => {
             const taskList = [...prev];
             const index = prev.findIndex(item => item._id === id)
@@ -37,15 +38,15 @@ export const ToDo = () => {
             localStorage.setItem('todo', JSON.stringify(taskList));
             return taskList
         })
-    }
-    const editTask = (index: number, newName: string) => {
+    },[setTodos])
+    const editTask = useCallback((index: number, newName: string) => {
         setTodos(prev => {
             const editTaskList = prev.map((item, i) => i === index ? {...item, name: newName} : item)
             localStorage.setItem('todo', JSON.stringify(editTaskList));
             return editTaskList;
         })
-    }
-    const sortedPriorityTask = (arr:ITodoItem[], typeSort: string) => {
+    },[setTodos])
+    const sortedPriorityTask = useCallback((arr:ITodoItem[], typeSort: string) => {
         const newList = [...arr]
         if(typeSort === 'Ascending'){
             newList.sort((a:ITodoItem, b:ITodoItem):number =>   {
@@ -64,8 +65,8 @@ export const ToDo = () => {
             })
         }       
         setTodos(newList)
-    }
-    const handleStatusClick = (status: string) => {
+    },[setTodos])
+    const handleStatusClick = useCallback((status: string) => {
         setSelectedStatus(prev => {
             if(prev === status){
                 return null
@@ -74,19 +75,38 @@ export const ToDo = () => {
                 return status
             }
         })
-    }
+    },[setSelectedStatus])
+    
     useEffect(() => {
         if(selectedStatus){
             const sortedList = todos.filter(item => item?.status === selectedStatus);
             setTodos(sortedList);
         }else {
-            // Если статус не выбран, показываем все задачи
             const storageList = localStorage.getItem('todo');
             const parsedTodos: ITodoItem[] = storageList != null ? JSON.parse(storageList) : [];
             setTodos(parsedTodos);
         }
     },[selectedStatus])
 
+    const handleOpenStatusFilterClick = useCallback(() => {
+        setIsOpeStatusFilter(prev => !prev);
+    }, [setIsOpeStatusFilter]); 
+
+    const handleOpenPriorityFilterClick = useCallback(() => {
+        setIsOpenFilter(prev => !prev);
+    }, [setIsOpenFilter]); 
+
+    const handleSortAscending = useCallback(() => {
+        sortedPriorityTask(todos, 'Ascending'); 
+    }, [todos, sortedPriorityTask]); 
+
+    const handleSortDescending = useCallback(() => {
+        sortedPriorityTask(todos, 'Descending'); 
+    }, [sortedPriorityTask, todos]); 
+
+    const filterIcon = useMemo(() => <CiFilter size={20}/>, []);
+    const arrowUpIcon = useMemo(() => <FaArrowUp size={16}/>, []);
+    const arrowDownIcon = useMemo(() => <FaArrowDown size={16}/>, []);
     return (
         <>
             <div className={styles.todoList}>
@@ -94,8 +114,8 @@ export const ToDo = () => {
                 <div className={styles.sorted}>
                     <div className={styles.sorted__status}>
                         <span className={styles.title}>Show tasks with status:</span>
-                        <Button className="basic" onClick={() => setIsOpeStatusFilter(!isOpenStatusFilter)}>
-                            <CiFilter size={20}/>
+                        <Button className="basic" onClick={handleOpenStatusFilterClick}>
+                            {filterIcon}
                         </Button>                        
                         <ul className={`${styles.sorted__wrapper} ${isOpenStatusFilter ? styles.active : ''}`}>
                             {statusList.map(status => (
@@ -108,13 +128,17 @@ export const ToDo = () => {
                     </div>
                     <div className={styles.sorted__priority}>
                         <span className={styles.title}>Filter</span>
-                        <Button className="basic" onClick={() => setIsOpenFilter(!isOpenFilter)}>
-                            <CiFilter size={20}/>
+                        <Button className="basic" onClick={handleOpenPriorityFilterClick}>
+                            {filterIcon}
                         </Button>
+                        {isOpenFilter &&
                         <ul className={`${styles.sorted__wrapper} ${isOpenFilter ? styles.active: ''}`}>
-                            <li className={styles.sorted__item}>Priority<Button className="arrow"onClick={() => sortedPriorityTask(todos, 'Ascending')}><FaArrowUp  size={16}/></Button></li>
-                            <li className={styles.sorted__item}>Priority<Button className="arrow"onClick={() => sortedPriorityTask(todos, 'Descending')}><FaArrowDown  size={16}/></Button></li>
-                        </ul>                        
+                            <li className={styles.sorted__item}>Priority<Button className="arrow"onClick={handleSortAscending}>{arrowUpIcon}</Button></li>
+                            
+                            <li className={styles.sorted__item}>Priority <Button className="arrow"onClick={handleSortDescending}>{arrowDownIcon}</Button></li>
+                           
+                        </ul>                                
+                        }
                     </div>
                 </div>
                 {todos.map(todo => 
