@@ -12,11 +12,11 @@ export const ToDo = () => {
     const [todos, setTodos] = useState<ITodoItem[]>([])
     const [isOpenFilter, setIsOpenFilter] = useState<boolean>(false);
     const [isOpenStatusFilter, setIsOpeStatusFilter] = useState(false);
-    const [selectedStatus, setSelectedStatus] = useState<string | null>(null)
+    const [selectedStatus, setSelectedStatus] = useState<Array <string>>([])
     const statusList:Status[] = ['todo', 'in progress', 'done'];
+
     useEffect(() =>{
         const storedTodos = localStorage.getItem('todo')
-        console.log('efect render')
         if(storedTodos){
             try{
                 const parsedTodos = JSON.parse(storedTodos);
@@ -28,7 +28,7 @@ export const ToDo = () => {
         }
     }, [])
 
-    const deleteTask = useCallback((id:number) => {
+    const deleteTask = useCallback((id:string) => {
         setTodos(prev => {
             const taskList = [...prev];
             const index = prev.findIndex(item => item._id === id)
@@ -39,13 +39,15 @@ export const ToDo = () => {
             return taskList
         })
     },[setTodos])
+
     const editTask = useCallback((index: number, newName: string) => {
         setTodos(prev => {
             const editTaskList = prev.map((item, i) => i === index ? {...item, name: newName} : item)
             localStorage.setItem('todo', JSON.stringify(editTaskList));
             return editTaskList;
         })
-    },[setTodos])
+    },[])
+
     const sortedPriorityTask = useCallback((arr:ITodoItem[], typeSort: string) => {
         const newList = [...arr]
         if(typeSort === 'Ascending'){
@@ -65,23 +67,34 @@ export const ToDo = () => {
             })
         }       
         setTodos(newList)
-    },[setTodos])
+    },[])
+
     const handleStatusClick = useCallback((status: string) => {
-        setSelectedStatus(prev => {
-            if(prev === status){
-                return null
+        setSelectedStatus((prev: string[]) => {
+            const statusList = [...prev]
+            const index = prev.findIndex((item:string) => item === status)
+            if(index !== -1){
+                statusList.splice(index, 1)
             }
             else {
-                return status
+                statusList.push(status)
             }
+            return statusList
         })
-    },[setSelectedStatus])
-    
+    },[])
+
     useEffect(() => {
-        if(selectedStatus){
-            const sortedList = todos.filter(item => item?.status === selectedStatus);
-            setTodos(sortedList);
-        }else {
+        if(selectedStatus.length > 0){
+                const storageList =localStorage.getItem('todo');
+                const list:ITodoItem[] = storageList && JSON.parse(storageList)
+                const sortedList = list.filter(item => {
+                    if(item.status){
+                        return selectedStatus.includes(item.status)
+                    }
+                });            
+            setTodos(sortedList)
+        }
+        else {
             const storageList = localStorage.getItem('todo');
             const parsedTodos: ITodoItem[] = storageList != null ? JSON.parse(storageList) : [];
             setTodos(parsedTodos);
@@ -107,6 +120,7 @@ export const ToDo = () => {
     const filterIcon = useMemo(() => <CiFilter size={20}/>, []);
     const arrowUpIcon = useMemo(() => <FaArrowUp size={16}/>, []);
     const arrowDownIcon = useMemo(() => <FaArrowDown size={16}/>, []);
+
     return (
         <>
             <div className={styles.todoList}>
@@ -118,10 +132,10 @@ export const ToDo = () => {
                             {filterIcon}
                         </Button>                        
                         <ul className={`${styles.sorted__wrapper} ${isOpenStatusFilter ? styles.active : ''}`}>
-                            {statusList.map(status => (
+                            {statusList.map((status, index) => (
                                 <li className={styles.sorted__item} onClick={() => handleStatusClick(status)}>
                                     {status}
-                                    {selectedStatus && <IoCloseOutline />}
+                                    {selectedStatus[index] === status && <IoCloseOutline />}
                                 </li>
                             ))}
                         </ul>
@@ -146,9 +160,9 @@ export const ToDo = () => {
                 key={`_todo_${todo._id}`} 
                 todo={todo}
                 editTask={editTask}
-                deleteTask={deleteTask}/>
+                deleteTask={deleteTask}
+                />
                 )}
-
             </div>    
             <CreateTask setTodos={setTodos}/>
         </>
