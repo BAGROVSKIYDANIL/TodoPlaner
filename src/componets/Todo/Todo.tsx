@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ToDoItem } from "./ToDoItem";
 import styles from './Todo.module.scss'
 import { CreateTask } from "../CreateTask/CreateTask";
@@ -6,6 +6,7 @@ import { CiFilter } from "react-icons/ci";
 import { FaArrowUp, FaArrowDown } from "react-icons/fa";
 import { IoCloseOutline } from "react-icons/io5";
 import { ITodoItem, Status } from "../../types";
+import { useClickOutside } from "../../hooks/useClickOutside";
 import Button from "../Button/Button";
 
 export const ToDo = () => {
@@ -13,6 +14,8 @@ export const ToDo = () => {
     const [isOpenFilter, setIsOpenFilter] = useState<boolean>(false);
     const [isOpenStatusFilter, setIsOpeStatusFilter] = useState(false);
     const [selectedStatus, setSelectedStatus] = useState<Array <string>>([])
+    const wrapperStatusListRef = useRef<HTMLUListElement>(null)
+    const wrapperPriorityListRef = useRef<HTMLUListElement>(null)
     const statusList:Status[] = ['todo', 'in progress', 'done'];
 
     useEffect(() =>{
@@ -40,9 +43,9 @@ export const ToDo = () => {
         })
     },[setTodos])
 
-    const editTask = useCallback((index: number, newName: string) => {
+    const editTask = useCallback((index: string, newName: string) => {
         setTodos(prev => {
-            const editTaskList = prev.map((item, i) => i === index ? {...item, name: newName} : item)
+            const editTaskList = prev.map(item => item._id === index ? {...item, name: newName} : item)
             localStorage.setItem('todo', JSON.stringify(editTaskList));
             return editTaskList;
         })
@@ -117,6 +120,13 @@ export const ToDo = () => {
         sortedPriorityTask(todos, 'Descending'); 
     }, [sortedPriorityTask, todos]); 
 
+    useClickOutside({ref: wrapperStatusListRef, callBack: () => {
+        if(isOpenStatusFilter) setTimeout(() => setIsOpeStatusFilter(false),50)
+    }})
+    useClickOutside({ref: wrapperPriorityListRef, callBack: () => {
+        if(isOpenFilter) setTimeout(() => setIsOpenFilter(false),50)
+    }})
+
     const filterIcon = useMemo(() => <CiFilter size={20}/>, []);
     const arrowUpIcon = useMemo(() => <FaArrowUp size={16}/>, []);
     const arrowDownIcon = useMemo(() => <FaArrowDown size={16}/>, []);
@@ -131,7 +141,7 @@ export const ToDo = () => {
                         <Button className="basic" onClick={handleOpenStatusFilterClick}>
                             {filterIcon}
                         </Button>                        
-                        <ul className={`${styles.sorted__wrapper} ${isOpenStatusFilter ? styles.active : ''}`}>
+                        <ul ref={wrapperStatusListRef} className={`${styles.sorted__wrapper} ${isOpenStatusFilter ? styles.active : ''}`}>
                             {statusList.map((status, index) => (
                                 <li className={styles.sorted__item} onClick={() => handleStatusClick(status)}>
                                     {status}
@@ -146,7 +156,7 @@ export const ToDo = () => {
                             {filterIcon}
                         </Button>
                         {isOpenFilter &&
-                        <ul className={`${styles.sorted__wrapper} ${isOpenFilter ? styles.active: ''}`}>
+                        <ul ref={wrapperPriorityListRef} className={`${styles.sorted__wrapper} ${isOpenFilter ? styles.active: ''}`}>
                             <li className={styles.sorted__item}>Priority<Button className="arrow"onClick={handleSortAscending}>{arrowUpIcon}</Button></li>
                             
                             <li className={styles.sorted__item}>Priority <Button className="arrow"onClick={handleSortDescending}>{arrowDownIcon}</Button></li>

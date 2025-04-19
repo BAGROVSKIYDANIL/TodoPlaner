@@ -4,9 +4,11 @@ import Button from '../Button/Button';
 import { FaPlus } from 'react-icons/fa6';
 import { ITodo} from "./types";
 import { PriorityType, Priority,Status } from "../../types";
+import { useClickOutside } from "../../hooks/useClickOutside";
 
 export const CreateTask = memo(({setTodos}: ITodo) => {
     const inputRef = useRef<HTMLInputElement>(null)
+    const wrapperDetailTaskRef = useRef<HTMLDivElement>(null)
     const textAreaRef = useRef<HTMLTextAreaElement>(null)
     const [selectedStatus, setStatus] = useState<Status | null>(null);
     const [selectedPriority, setPriority] = useState<Priority | null>(null);
@@ -14,7 +16,9 @@ export const CreateTask = memo(({setTodos}: ITodo) => {
     const statusList:Status[] = ['todo','in progress','done']
     const priorityList: PriorityType[] = ['low','medium', 'high']
 
-
+    useClickOutside({ref: wrapperDetailTaskRef, callBack: () => {
+        if(isOpenDetails) setTimeout(() => setIsOpenDetails(false),50)
+    }})
     const handleCreateTask = useCallback(() => {
             if(inputRef.current?.value.trim() === '') return
             if(inputRef.current && textAreaRef.current){
@@ -57,7 +61,7 @@ export const CreateTask = memo(({setTodos}: ITodo) => {
                     <span className={styles.newTask__title}>Create new task</span>
             </div>    
             {isOpenDetails &&
-                <div className={`${styles.detailsTask} ${isOpenDetails ? styles.active: ''}`}>
+                <div ref={wrapperDetailTaskRef} className={`${styles.detailsTask} ${isOpenDetails ? styles.active: ''}`}>
                     <div className={styles.detailsTask__createWrapper}>
                         <input 
                             className={styles.newTask__input} 
