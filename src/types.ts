@@ -6,7 +6,7 @@ export type Priority = {
     num: number
 }
 export interface ITodoItem {
-    _id: number;
+    _id: string;
     name: string;
     isChecked: boolean;
     priority?: Priority | null;
