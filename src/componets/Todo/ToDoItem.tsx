@@ -4,7 +4,7 @@ import { FaRegTrashCan, FaCheck } from "react-icons/fa6";
 import { MdModeEditOutline } from "react-icons/md";
 import { FaEye } from "react-icons/fa";
 import { BsThreeDotsVertical } from "react-icons/bs";
-import { useState, useRef, memo, useCallback } from 'react';
+import { useState, useRef, memo, useCallback, useMemo, useEffect } from 'react';
 import { useClickOutside } from '../../hooks/useClickOutside';
 import Button from '../Button/Button';
 import { ITodoItemProps } from './TodoInreface';
@@ -12,9 +12,9 @@ import { ITodoItemProps } from './TodoInreface';
 export const ToDoItem:React.FC<ITodoItemProps> = memo(({todo, deleteTask, editTask}) => {
     const [isChecked, setIsChecked] = useState(false);
     const [isEditTask, setIsEditTask] = useState<boolean>(false)
-    const [textFiled, setTextFiled] = useState<string>('')
     const [showDescription, setShowDescription] = useState<boolean>(false)    
     const descriptionRef = useRef<HTMLDivElement>(null)
+    const inputRef = useRef<HTMLInputElement>(null)
 
     const priorityClasses: Record<PriorityType, string>  = {
         high: styles.priorityHigh,
@@ -36,19 +36,31 @@ export const ToDoItem:React.FC<ITodoItemProps> = memo(({todo, deleteTask, editTa
             const checked = e.target.checked;
             setIsChecked(checked)
     },[])
-    const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => 
-    {
-        setTextFiled(e.target.value);
-    },[]);        
-    const handleEditMesage = useCallback(() => {
-        setTextFiled(todo.name)
-        setIsEditTask(true)
-    },[])
+
     const successEditMessage = useCallback(() => {
-            setIsEditTask(false)
-            editTask(todo._id, textFiled)
-    },[])
+            
+            if(inputRef.current){
+                const newText = inputRef.current.value.trim();
+                if (newText !== ''){
+                editTask(todo._id, inputRef.current.value)
+                }
+                setIsEditTask(false)
+            }
+            else{
+                setIsEditTask(false)
+            }
+    },[todo._id, editTask])
+
+    useEffect(() => {
+        if(inputRef.current && isEditTask){
+            inputRef.current.value = todo.name
+        }
+    },[isEditTask, todo.name])
     
+    const handleShowDescription = useCallback(() => setShowDescription(prev => !prev),[])
+    const iconEye = useMemo(() =>  <FaEye size={18}/>, [])
+    const iconEdit = useMemo(() => <MdModeEditOutline size={20}/>,[])
+    const iconTrashCan = useMemo(() => <FaRegTrashCan size={20}/>,[])
     return (
         <>
             <div className={styles.todoItem}>
@@ -63,10 +75,9 @@ export const ToDoItem:React.FC<ITodoItemProps> = memo(({todo, deleteTask, editTa
                     {isEditTask ?
                         <>
                             <input
+                                ref={inputRef}
                                 type="text"
                                 className={styles.editInput}
-                                value={textFiled}
-                                onChange={handleInputChange}
                                 autoFocus/>                      
                             <Button onClick={() => successEditMessage()}>
                                 <FaCheck size={20} color='#00FF00'/>
@@ -76,21 +87,25 @@ export const ToDoItem:React.FC<ITodoItemProps> = memo(({todo, deleteTask, editTa
                         <div className={styles.infoTask}>
                             <span className={styles.infoTask__text}>{todo.name}</span>|
                             <div className={styles.infoTask__description}>
-                                Desctiption: 
-                                <Button className='basic' onClick={() => setShowDescription(!showDescription)}>
-                                    <FaEye size={18}/>
-                                </Button>
+                                {todo.description &&
+                                    <>
+                                        Desctiption:  
+                                        <Button className='basic' onClick={handleShowDescription}>
+                                        {iconEye}
+                                        </Button>                                
+                                    </>                                
+                                }
                             </div>
                         </div>
                     }
                     <div className={styles.detailsTask}>
                         <span className={`${styles.detailsTask__status} ${ todo.status != null ? statusesClasses[todo.status] : ''}`}>{todo.status}</span>
                         <span className={`${styles.detailsTask__priority} ${todo.priority != null ? priorityClasses[todo.priority.type] : ''}`}>{todo.priority?.type}</span>
-                        <Button className='basic' onClick={() => handleEditMesage()}>
-                            <MdModeEditOutline size={20}/>
+                        <Button className='basic' onClick={() => setIsEditTask(true)}>
+                            {iconEdit}
                         </Button>
                         <Button className='basic' onClick={() => deleteTask(todo._id)}>
-                            <FaRegTrashCan size={20}/>
+                            {iconTrashCan}
                         </Button>
                         <Button className='basic' >
                             <BsThreeDotsVertical size={20}/>
