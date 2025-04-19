@@ -22,7 +22,7 @@ export const CreateTask = memo(({setTodos}: ITodo) => {
                 const description = textAreaRef.current.value
                 setTodos(prev => {
                 const newTodos = [...prev, {
-                    _id: prev.length, 
+                    _id:  Math.random().toString(36).substr(2, 9), 
                     name: tile, 
                     isChecked: false, 
                     priority: selectedPriority, 
