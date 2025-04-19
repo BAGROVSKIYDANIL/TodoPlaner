@@ -18,11 +18,17 @@ export const CreateTask = memo(({setTodos}: ITodo) => {
     const handleCreateTask = useCallback(() => {
             if(inputRef.current?.value.trim() === '') return
             if(inputRef.current && textAreaRef.current){
-                
+                const tile = inputRef.current.value;
+                const description = textAreaRef.current.value
                 setTodos(prev => {
-                const newTodos = [...prev, {_id: prev.length, name: inputRef.current?.value ?? '', isChecked: false, priority: selectedPriority, status: selectedStatus, description: textAreaRef.current?.value ?? ''}];
+                const newTodos = [...prev, {
+                    _id: prev.length, 
+                    name: tile, 
+                    isChecked: false, 
+                    priority: selectedPriority, 
+                    status: selectedStatus, 
+                    description: description}];
                 localStorage.setItem('todo', JSON.stringify(newTodos));
-                
                 return newTodos;
                 });
                 inputRef.current.value = ''
@@ -30,7 +36,7 @@ export const CreateTask = memo(({setTodos}: ITodo) => {
                 setPriority(null)
                 setStatus(null)                
             }                
-    },[setTodos])  
+    },[setTodos,selectedPriority,selectedStatus])  
 
     const  handleSelectedDetailTask = useCallback((type:string ,detailsTask:Status | PriorityType, numPriority: number) => {
         if(type === 'status'){
