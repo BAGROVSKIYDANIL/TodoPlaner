@@ -1,15 +1,15 @@
 import styles from './Todo.module.scss'
-import { PriorityType, Status } from '../../types';
+import { ITodoItem, PriorityType, Status } from '../../types';
 import { FaRegTrashCan, FaCheck } from "react-icons/fa6";
 import { MdModeEditOutline } from "react-icons/md";
 import { FaEye } from "react-icons/fa";
 import { BsThreeDotsVertical } from "react-icons/bs";
-import { useState, useRef, memo, useCallback, useMemo, useEffect } from 'react';
+import { useState, useRef, memo, useCallback, useMemo, useEffect, DragEvent } from 'react';
 import { useClickOutside } from '../../hooks/useClickOutside';
 import Button from '../Button/Button';
 import { ITodoItemProps } from './TodoInreface';
 
-export const ToDoItem:React.FC<ITodoItemProps> = memo(({todo, deleteTask, editTask}) => {
+export const ToDoItem:React.FC<ITodoItemProps> = memo(({todo, deleteTask, editTask, setTodos}) => {
     const [isChecked, setIsChecked] = useState(false);
     const [isEditTask, setIsEditTask] = useState<boolean>(false)
     const [showDescription, setShowDescription] = useState<boolean>(false)    
@@ -56,14 +56,64 @@ export const ToDoItem:React.FC<ITodoItemProps> = memo(({todo, deleteTask, editTa
             inputRef.current.value = todo.name
         }
     },[isEditTask, todo.name])
-    
+
     const handleShowDescription = useCallback(() => setShowDescription(prev => !prev),[])
     const iconEye = useMemo(() =>  <FaEye size={18}/>, [])
     const iconEdit = useMemo(() => <MdModeEditOutline size={20}/>,[])
     const iconTrashCan = useMemo(() => <FaRegTrashCan size={20}/>,[])
+
+    const dragStartHandler = (e: DragEvent<HTMLLIElement>, todo: ITodoItem) => {
+        e.dataTransfer.setData('application/json', JSON.stringify(todo));
+    }
+
+    const dragLeaveHandler = (e: DragEvent<HTMLLIElement>) => {
+        e.currentTarget.style.background = 'rgb(116, 114, 114)'
+    }
+
+    const dragEndHandler = (e: DragEvent<HTMLLIElement>) => {
+        e.currentTarget.style.background = 'rgb(116, 114, 114)'
+    }
+
+    const dragOverHandler = (e: DragEvent<HTMLLIElement>) => {
+        e.preventDefault();
+        e.currentTarget.style.background = 'lightgray';
+    }
+
+    const dropHandler = async (e: DragEvent<HTMLLIElement>, todo: ITodoItem) => {
+        e.preventDefault()
+        e.currentTarget.style.background = 'rgb(116, 114, 114)';
+        const draggedTodoString = e.dataTransfer.getData('application/json');
+
+        if (!draggedTodoString) return;
+        const draggedTodo: ITodoItem = JSON.parse(draggedTodoString);
+
+         setTodos(prev => {
+            const todoList:ITodoItem[] = [...prev];
+            const newList = todoList.map(item => {
+                if(item._id === todo._id){
+                    return {...item, order: draggedTodo.order}
+                }
+                if(item._id === draggedTodo._id){
+                    return {...item, order: todo.order}
+                }
+                return item
+            })
+            localStorage.setItem('todo', JSON.stringify(newList));
+            return newList
+        })
+       
+    }
+
     return (
         <>
-            <div className={styles.todoItem}>
+            <li 
+            onDragStart={(e) => dragStartHandler(e, todo)}
+            onDragLeave={(e) => dragLeaveHandler(e)}
+            onDragEnd={(e) => dragEndHandler(e)}
+            onDragOver={(e) => dragOverHandler(e)}
+            onDrop={(e) => dropHandler(e, todo)}
+            draggable={true} 
+            className={styles.todoItem}>
                     <label key={todo._id} className={styles.checkbox} onClick={(e) => e.stopPropagation()}>
                         <input className={styles.checkbox__input} type="checkbox"  onChange={handleCheckboxChange} checked={isChecked}/>
                         <span className={styles.checkbox__indicator}>
@@ -114,8 +164,7 @@ export const ToDoItem:React.FC<ITodoItemProps> = memo(({todo, deleteTask, editTa
                     {showDescription &&
                         <div ref={descriptionRef} className={styles.description}>{todo.description}</div>                    
                     }
-            </div>     
-
+            </li>     
         </>
     );
 }, (prevProps, nextProps) => {
