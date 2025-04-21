@@ -146,6 +146,9 @@ export const ToDoItem:React.FC<ITodoItemProps> = memo(({todo, deleteTask, editTa
                                         </Button>                                
                                     </>                                
                                 }
+                                {showDescription &&
+                                    <div ref={descriptionRef} className={styles.description}>{todo.description}</div>                    
+                                }
                             </div>
                         </div>
                     }
@@ -162,9 +165,7 @@ export const ToDoItem:React.FC<ITodoItemProps> = memo(({todo, deleteTask, editTa
                             <BsThreeDotsVertical size={20}/>
                         </Button>
                     </div>
-                    {showDescription &&
-                        <div ref={descriptionRef} className={styles.description}>{todo.description}</div>                    
-                    }
+
             </li>     
         </>
     );
