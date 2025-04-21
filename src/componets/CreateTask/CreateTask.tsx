@@ -28,6 +28,7 @@ export const CreateTask = memo(({setTodos}: ITodo) => {
                 const newTodos = [...prev, {
                     _id:  Math.random().toString(36).substr(2, 9), 
                     name: tile, 
+                    order: prev.length + 1,
                     isChecked: false, 
                     priority: selectedPriority, 
                     status: selectedStatus, 
