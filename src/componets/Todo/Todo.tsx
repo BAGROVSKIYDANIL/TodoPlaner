@@ -36,7 +36,8 @@ export const ToDo = () => {
             const taskList = [...prev];
             const index = prev.findIndex(item => item._id === id)
             if(index !== -1){
-                taskList.splice(index, 1)
+                taskList.splice(index, 1);
+                taskList.map((task, index) => task.order = index + 1)
             }
             localStorage.setItem('todo', JSON.stringify(taskList));
             return taskList
@@ -127,6 +128,13 @@ export const ToDo = () => {
         if(isOpenFilter) setTimeout(() => setIsOpenFilter(false),50)
     }})
 
+    const sortTodos = (a:ITodoItem, b:ITodoItem) => {
+        if(a.order > b.order){
+            return 1
+        } else {
+            return -1
+        }
+    }
     const filterIcon = useMemo(() => <CiFilter size={20}/>, []);
     const arrowUpIcon = useMemo(() => <FaArrowUp size={16}/>, []);
     const arrowDownIcon = useMemo(() => <FaArrowDown size={16}/>, []);
@@ -165,12 +173,13 @@ export const ToDo = () => {
                         }
                     </div>
                 </div>
-                {todos.map(todo => 
+                {todos.sort(sortTodos).map(todo => 
                 <ToDoItem 
                 key={`_todo_${todo._id}`} 
                 todo={todo}
                 editTask={editTask}
                 deleteTask={deleteTask}
+                setTodos={setTodos}
                 />
                 )}
             </div>    
