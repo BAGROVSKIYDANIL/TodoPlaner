@@ -8,6 +8,7 @@ export type Priority = {
 export interface ITodoItem {
     _id: string;
     name: string;
+    order: number;
     isChecked: boolean;
     priority?: Priority | null;
     status?: Status | null;
