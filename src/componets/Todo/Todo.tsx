@@ -150,10 +150,10 @@ export const ToDo = () => {
                             {filterIcon}
                         </Button>                        
                         <ul ref={wrapperStatusListRef} className={`${styles.sorted__wrapper} ${isOpenStatusFilter ? styles.active : ''}`}>
-                            {statusList.map((status, index) => (
+                            {statusList.map(status => (
                                 <li className={styles.sorted__item} onClick={() => handleStatusClick(status)}>
                                     {status}
-                                    {selectedStatus[index] === status && <IoCloseOutline />}
+                                    {selectedStatus.includes(status) && <IoCloseOutline />}
                                 </li>
                             ))}
                         </ul>
