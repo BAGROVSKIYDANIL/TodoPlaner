@@ -8,11 +8,15 @@ import { IoCloseOutline } from "react-icons/io5";
 import { ITodoItem, Status } from "../../types";
 import { useClickOutside } from "../../hooks/useClickOutside";
 import Button from "../Button/Button";
+import { SortType } from "./TodoInreface";
+
+
 
 export const ToDo = () => {
     const [todos, setTodos] = useState<ITodoItem[]>([])
     const [isOpenFilter, setIsOpenFilter] = useState<boolean>(false);
     const [isOpenStatusFilter, setIsOpeStatusFilter] = useState(false);
+    const [activeSort, setActiveSort] = useState<SortType>('order');
     const [selectedStatus, setSelectedStatus] = useState<Array <string>>([])
     const wrapperStatusListRef = useRef<HTMLUListElement>(null)
     const wrapperPriorityListRef = useRef<HTMLUListElement>(null)
@@ -52,27 +56,9 @@ export const ToDo = () => {
         })
     },[])
 
-    const sortedPriorityTask = useCallback((arr:ITodoItem[], typeSort: string) => {
-        const newList = [...arr]
-        if(typeSort === 'Ascending'){
-            newList.sort((a:ITodoItem, b:ITodoItem):number =>   {
-                        if(a.priority != null && b.priority != null ){
-                            return a.priority.num - b.priority.num
-                        }
-                        return 0
-                })                
-        }        
-        if(typeSort === 'Descending'){
-           newList.sort((a:ITodoItem, b:ITodoItem):number => {
-                if(b.priority != null && a.priority != null){
-                    return b.priority.num - a.priority.num
-                }
-                return 0
-            })
-        }       
-        setTodos(newList)
-    },[])
-
+    const sortedPriorityTask = useCallback((typeSort: 'Ascending' | 'Descending') => {
+    setActiveSort(typeSort === 'Ascending' ? 'priority-asc' : 'priority-desc');
+}, []);
     const handleStatusClick = useCallback((status: string) => {
         setSelectedStatus((prev: string[]) => {
             const statusList = [...prev]
@@ -113,14 +99,13 @@ export const ToDo = () => {
         setIsOpenFilter(prev => !prev);
     }, [setIsOpenFilter]); 
 
-    const handleSortAscending = useCallback(() => {
-        sortedPriorityTask(todos, 'Ascending'); 
-    }, [todos, sortedPriorityTask]); 
+const handleSortAscending = useCallback(() => {
+    sortedPriorityTask('Ascending');
+}, [sortedPriorityTask]);
 
-    const handleSortDescending = useCallback(() => {
-        sortedPriorityTask(todos, 'Descending'); 
-    }, [sortedPriorityTask, todos]); 
-
+const handleSortDescending = useCallback(() => {
+    sortedPriorityTask('Descending');
+}, [sortedPriorityTask]);
     useClickOutside({ref: wrapperStatusListRef, callBack: () => {
         if(isOpenStatusFilter) setTimeout(() => setIsOpeStatusFilter(false),50)
     }})
@@ -128,13 +113,6 @@ export const ToDo = () => {
         if(isOpenFilter) setTimeout(() => setIsOpenFilter(false),50)
     }})
 
-    const sortTodos = (a:ITodoItem, b:ITodoItem) => {
-        if(a.order > b.order){
-            return 1
-        } else {
-            return -1
-        }
-    }
     const filterIcon = useMemo(() => <CiFilter size={20}/>, []);
     const arrowUpIcon = useMemo(() => <FaArrowUp size={16}/>, []);
     const arrowDownIcon = useMemo(() => <FaArrowDown size={16}/>, []);
@@ -173,13 +151,24 @@ export const ToDo = () => {
                         }
                     </div>
                 </div>
-                {todos.sort(sortTodos).map(todo => 
+                {todos
+                .sort((a, b) => {
+                    if (activeSort === 'order') {
+                        return a.order - b.order;
+                    } else if (activeSort === 'priority-asc') {
+                        return (a.priority?.num ?? Infinity) - (b.priority?.num ?? Infinity);
+                    } else { 
+                        return (b.priority?.num ?? -Infinity) - (a.priority?.num ?? -Infinity);
+                    }
+                })
+                .map(todo => 
                 <ToDoItem 
                 key={`_todo_${todo._id}`} 
                 todo={todo}
                 editTask={editTask}
                 deleteTask={deleteTask}
                 setTodos={setTodos}
+                setActiveSort={setActiveSort}
                 />
                 )}
             </div>    
