@@ -9,7 +9,7 @@ import { useClickOutside } from '../../hooks/useClickOutside';
 import Button from '../Button/Button';
 import { ITodoItemProps } from './TodoInreface';
 
-export const ToDoItem:React.FC<ITodoItemProps> = memo(({todo, deleteTask, editTask, setTodos}) => {
+export const ToDoItem:React.FC<ITodoItemProps> = memo(({todo, deleteTask, editTask, setTodos, setActiveSort}) => {
     const [isChecked, setIsChecked] = useState(false);
     const [isEditTask, setIsEditTask] = useState<boolean>(false)
     const [showDescription, setShowDescription] = useState<boolean>(false)    
@@ -64,6 +64,7 @@ export const ToDoItem:React.FC<ITodoItemProps> = memo(({todo, deleteTask, editTa
 
     const dragStartHandler = (e: DragEvent<HTMLLIElement>, todo: ITodoItem) => {
         e.dataTransfer.setData('application/json', JSON.stringify(todo));
+        setActiveSort('order')
     }
 
     const dragLeaveHandler = (e: DragEvent<HTMLLIElement>) => {
